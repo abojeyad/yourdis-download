@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تحميل تطبيق Yourdis</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    p {
+      font-size: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <p id="message">يرجى الانتظار... جاري توجيهك للمتجر</p>
+
+  <script>
+    // تحديد نوع الجهاز
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    let target;
+
+    if (/android/i.test(ua)) {
+      target = "https://play.google.com/store/apps/details?id=com.yourdis";
+    } else if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+      target = "https://apps.apple.com/sa/app/yourdis/id6584529767";
+    } else {
+      target = "https://yourdis.com";  // للمستخدمين على الكمبيوتر أو أنظمة أخرى
+    }
+
+    // تأخير بسيط لإظهار الرسالة
+    setTimeout(() => {
+      window.location.href = target;
+    }, 1500); // 1.5 ثانية
+  </script>
+</body>
+</html>
