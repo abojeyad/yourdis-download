@@ -3,40 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>تحميل تطبيق Yourdis</title>
+  <title>تحويل الرابط إلى QR Code</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
       text-align: center;
-      padding: 2rem;
-      background: #f9f9f9;
+      padding: 40px 20px;
+    }
+    h2 {
       color: #333;
     }
-    p {
-      font-size: 1.25rem;
+    #qrcode-canvas {
+      margin-top: 20px;
+      width: 300px; /* حجم العرض للعرض على الشاشة */
+      height: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin: 15px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <p id="message">يرجى الانتظار... جاري توجيهك للمتجر</p>
+
+  <h2>تحويل رابط تحميل يوردس الى QR Code</h2>
+
+  <canvas id="qrcode-canvas"></canvas>
+  <br>
+  <button id="download-btn">حفظ الصورة</button>
 
   <script>
-    // تحديد نوع الجهاز
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    let target;
+    // الرابط الثابت
+    const link = "https://yourdis.github.io/download/";
 
-    if (/android/i.test(ua)) {
-      target = "https://play.google.com/store/apps/details?id=com.yourdis";
-    } else if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-      target = "https://apps.apple.com/sa/app/yourdis/id6584529767";
-    } else {
-      target = "https://yourdis.com";  // للمستخدمين على الكمبيوتر أو أنظمة أخرى
-    }
+    // خيارات دقّة عالية: نحدد حجم الكانفاس الفعلي ثم نعرضه أصغر للشاشة
+    const canvas = document.getElementById("qrcode-canvas");
+    const displaySize = 300;   // بكسل للحجم المعروض
+    const actualSize = 500;    // بكسل لحجم التصدير الفعلي
+    canvas.width = actualSize;
+    canvas.height = actualSize;
+    canvas.style.width = displaySize + "px";
+    canvas.style.height = displaySize + "px";
 
-    // تأخير بسيط لإظهار الرسالة
-    setTimeout(() => {
-      window.location.href = target;
-    }, 1500); // 1.5 ثانية
+    // إنشاء QR على الكانفاس بدقة 500x500
+    QRCode.toCanvas(canvas, link, {
+      width: actualSize,
+      margin: 2
+    }, function (error) {
+      if (error) console.error(error);
+    });
+
+    // زر التحميل
+    document.getElementById("download-btn").addEventListener("click", function () {
+      // نحصل على بيانات الصورة بصيغة PNG
+      const pngUrl = canvas.toDataURL("image/png");
+      // نخلق رابط مؤقت ونحمله
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = "qrcode.png";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
   </script>
+
 </body>
 </html>
